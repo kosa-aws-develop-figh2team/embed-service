@@ -9,6 +9,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # 필요한 파일 복사
+COPY ./embedding.py /app
 COPY ./main.py /app
 COPY ./requirements.txt /app
 

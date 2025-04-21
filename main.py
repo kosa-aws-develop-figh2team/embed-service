@@ -3,6 +3,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
 
+from embedding import get_korean_embeddings
+
 app = FastAPI()
 
 class EmbedRequest(BaseModel):
@@ -13,7 +15,6 @@ class EmbedResponse(BaseModel):
 
 @app.post("/embed/text", response_model=EmbedResponse)
 def embed_text(request: EmbedRequest):
-    # TODO: 추후 모델 삽입
-    # 현재는 임시 벡터 반환
-    dummy_vector = [0.1, 0.2, 0.3]
-    return {"embedding_vector": dummy_vector}
+    raw_text = request.raw_text
+    vector = get_korean_embeddings(raw_text)
+    return {"embedding_vector": vector}

@@ -51,9 +51,9 @@ docker run -p 8000:8000 embed-service
 
 
 ## ⚙️ CI/CD (ECR 배포)
-GitHub Actions를 활용하여 main 브랜치에 push 시 AWS ECR로 자동 배포됩니다.
+GitHub Actions를 활용하여 dev 브랜치에 push 시 AWS ECR로 자동 배포됩니다.
 
-- ECR 등록 예상 구조:
+- ECR:
 	- Repository: embed-service
 	- Tag: Git SHA 또는 latest
 > 📦 .github/workflows/deploy.yml 참고
