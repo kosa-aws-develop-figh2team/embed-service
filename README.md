@@ -1,16 +1,14 @@
 # 🧠 embed-service
 
-**텍스트 임베딩 생성 API 서비스**  
-질문/문서 등 다양한 텍스트 입력을 벡터로 임베딩하여 반환하는 FastAPI 기반의 경량 REST API
+> **텍스트 임베딩 생성 API 서비스**  
+> 질문/문서 등 다양한 텍스트 입력을 벡터로 임베딩하여 반환하는 FastAPI 기반의 경량 REST API
 
----
 
 ## ✅ 개요
 
 이 서비스는 `POST /embed/text` API를 통해 입력된 `raw_text`를 벡터 임베딩으로 변환합니다.  
 향후 LLM 기반 RAG 시스템의 공통 임베딩 서비스로 활용됩니다.
 
----
 
 ## 🧩 API 명세
 
@@ -32,7 +30,6 @@
 	- 400 Bad Request: 요청 파라미터 오류
 	- 500 Internal Server Error: 서버 내부 오류
 
-⸻
 
 ## 🚀 로컬 실행 방법
 ```bash
@@ -52,7 +49,6 @@ docker build -t embed-service .
 docker run -p 8000:8000 embed-service
 ```
 
----
 
 ## ⚙️ CI/CD (ECR 배포)
 GitHub Actions를 활용하여 main 브랜치에 push 시 AWS ECR로 자동 배포됩니다.
@@ -62,7 +58,6 @@ GitHub Actions를 활용하여 main 브랜치에 push 시 AWS ECR로 자동 배�
 	- Tag: Git SHA 또는 latest
 > 📦 .github/workflows/deploy.yml 참고
 
----
 
 ## 🛠️ TODO
 - 실제 임베딩 모델 연결 (e.g. Bedrock, HuggingFace, 내부 모델 등)
@@ -70,7 +65,6 @@ GitHub Actions를 활용하여 main 브랜치에 push 시 AWS ECR로 자동 배�
 - 요청/응답 예외 처리 정교화
 - 헬스체크 엔드포인트 추가
 
----
 
 ## 📁 디렉토리 구조
 
