@@ -17,4 +17,4 @@ class EmbedResponse(BaseModel):
 def embed_text(request: EmbedRequest):
     raw_text = request.raw_text
     vector = get_korean_embeddings(raw_text)
-    return {"embedding_vector": vector}
+    return {"embedding_vector": vector} 
