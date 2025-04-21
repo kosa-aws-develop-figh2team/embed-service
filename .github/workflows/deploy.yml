@@ -2,34 +2,40 @@ name: 🚀 Deploy to ECR
 
 on:
   push:
-    branches: [dev]
+    branches: [main]
 
 jobs:
   build-and-push:
-    name: Build & Push to ECR
+    name: Build & Push to Amazon ECR
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: ⏬ Checkout source code
         uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
+      - name: 🔐 Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
+      - name: 🔑 Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, Tag, and Push Docker image
+      - name: 🛠️ Build, tag, and push Docker image to ECR
         env:
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          ECR_REGISTRY: ${{ vars.ECR_REGISTRY }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+          echo "🔨 Docker build 시작"
+          docker build --platform linux/amd64 -t $ECR_REPOSITORY:$IMAGE_TAG .
+          
+          echo "🏷️ 태그 추가"
           docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          
+          echo "🚀 ECR로 push 시작"
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
