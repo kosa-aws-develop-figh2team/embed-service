@@ -18,7 +18,7 @@ RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
 # 포트 설정
-EXPOSE 8000
+EXPOSE 5001
 
 # FastAPI 앱 실행
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5001"]
