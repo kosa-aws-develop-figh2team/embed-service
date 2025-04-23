@@ -33,7 +33,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           echo "🔨 Buildx로 Docker build 시작"
-          docker buildx build --platform linux/amd64 -t $ECR_REPOSITORY:$IMAGE_TAG .
+          docker buildx build --platform=linux/amd64 --load -t $ECR_REPOSITORY:$IMAGE_TAG .
 
           echo "🏷️ 태그 추가"
           docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
