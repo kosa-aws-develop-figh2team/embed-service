@@ -127,6 +127,5 @@ POSTGRES_DB=yourdb
 
 
 ## ⚙️ TODO
-- 헬스체크 엔드포인트 추가
 - embedding API 리팩토링 및 예외 처리 개선
 - tracing 및 metrics 연동 (OpenTelemetry)

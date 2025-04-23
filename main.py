@@ -42,6 +42,10 @@ class StatusResponse(BaseModel):
     vector_ids: List[str]
     content: List[str]
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
 # 1. 단일 텍스트 임베딩 생성 및 저장
 @app.post("/embed/text", response_model=EmbedResponse)
 def embed_single_text(request: SingleEmbedRequest):

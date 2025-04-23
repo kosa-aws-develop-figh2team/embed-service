@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: embed-service
+  namespace: embed
+spec:
+  type: LoadBalancer
+  selector:
+    app: embed-app
+  ports:
+    - name: http
+      port: 5001             # 클라이언트가 접근할 포트 (내부 & 외부 모두)
+      targetPort: 5001       # 컨테이너 내부 포트 (FastAPI)
+      nodePort: 30001        # EC2 노드의 포트 (30000~32767 범위에서 명시적으로 지정 가능)

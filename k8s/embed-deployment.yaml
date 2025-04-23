@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: embed-deployment
+  namespace: embed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: embed-app
+  template:
+    metadata:
+      labels:
+        app: embed-app
+    spec:
+      containers:
+      - name: embed-app
+        image: 687436499847.dkr.ecr.ap-northeast-2.amazonaws.com/embed/embed-service:latest
+        ports:
+        - containerPort: 5001
