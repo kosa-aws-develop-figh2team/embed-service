@@ -110,7 +110,6 @@ POSTGRES_PASSWORD=password
 POSTGRES_DB=yourdb
 ```
 
----
 
 ## 📁 디렉토리 구조
 
@@ -126,7 +125,6 @@ POSTGRES_DB=yourdb
     └── save_pgvector.py
 ```
 
----
 
 ## ⚙️ TODO
 - 헬스체크 엔드포인트 추가
