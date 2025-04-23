@@ -16,10 +16,10 @@ COPY ./requirements.txt /app
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-RUN python -c "\
-from transformers import AutoModel, AutoTokenizer; \
-AutoModel.from_pretrained('BM-K/KoSimCSE-roberta'); \
-AutoTokenizer.from_pretrained('BM-K/KoSimCSE-roberta')"
+# RUN python -c "\
+# from transformers import AutoModel, AutoTokenizer; \
+# AutoModel.from_pretrained('BM-K/KoSimCSE-roberta'); \
+# AutoTokenizer.from_pretrained('BM-K/KoSimCSE-roberta')"
 
 EXPOSE 5001
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5001"]

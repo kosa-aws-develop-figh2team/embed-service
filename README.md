@@ -117,6 +117,9 @@ POSTGRES_DB=yourdb
 .
 ├── README.md
 ├── dockerfile
+├── k8s
+│   ├── embed-deployment.yaml
+│   └── embed-service.yaml
 ├── main.py
 ├── requirements.txt
 └── utils
