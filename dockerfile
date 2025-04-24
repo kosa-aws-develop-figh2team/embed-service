@@ -13,10 +13,10 @@ COPY ./utils /app/utils
 COPY ./main.py /app
 COPY ./requirements.txt /app
 
+# uvicorn을 바이너리 대신 소스 설치로 강제
 RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
-
-RUN pip uninstall -y uvicorn && pip install --no-binary :all: uvicorn
+    pip install --no-cache-dir --no-binary :all: uvicorn && \
+    pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5001
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5001"]
