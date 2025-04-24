@@ -35,6 +35,13 @@ jobs:
           echo "🔨 Buildx로 Docker build 시작"
           docker buildx build \
             --platform linux/amd64 \
-            --push \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+            --load \
+            -t $ECR_REPOSITORY:$IMAGE_TAG .
+
+          echo "🏷️ 태그 추가"
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+          echo "🚀 ECR로 push 시작"
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
