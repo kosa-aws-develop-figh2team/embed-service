@@ -4,5 +4,6 @@ psycopg2-binary==2.9.9
 fastapi==0.110.0
 pydantic==2.6.4
 
+python-dotenv
 # transformers==4.51.3
 # torch==2.6.0

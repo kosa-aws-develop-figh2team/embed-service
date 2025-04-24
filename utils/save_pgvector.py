@@ -86,7 +86,7 @@ def save_text_to_pg(
 def save_chunks_to_pg(
     chunks: List[str],
     service_id: str,
-) -> List[List[str], bool]:
+) -> List:
     """
     여러 텍스트 청크를 PostgreSQL에 일괄 저장
     중간 실패 시 해당 작업만 롤백 및 연결 종료
