@@ -7,7 +7,7 @@ import dotenv
 import os
 dotenv.load_dotenv()
 
-from utils.embedding import get_korean_embeddings
+from utils.embedding import get_embeddings
 
 # 로깅 설정
 logger = logging.getLogger(__name__)
@@ -54,7 +54,7 @@ def search_similar_documents(
     pgvector를 이용해 가장 유사한 문서 청크를 top-k개 검색하여 반환
     """
     results = []
-    embedding_vector = get_korean_embeddings(text)
+    embedding_vector = get_embeddings(text)
     with get_pg_connection(pg_config) as conn:
         with conn.cursor() as cur:
             query = """

@@ -8,7 +8,7 @@ import boto3
 import json
 import logging
 from typing import List
-from transformers import AutoTokenizer, AutoModel
+# from transformers import AutoTokenizer, AutoModel
 import torch
 from functools import lru_cache
 
@@ -23,6 +23,10 @@ BEDROCK_REGION = os.getenv("BEDROCK_REGION", "us-west-2")
 # 로깅 설정
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', handlers=[logging.StreamHandler()])
+
+def get_embeddings(text:str) -> List[float]:
+    embedding = get_bedrock_embedding(text)
+    return embedding
 
 def get_bedrock_embedding(text: str) -> List[float]:
     """
@@ -53,14 +57,15 @@ def get_bedrock_embedding(text: str) -> List[float]:
     logger.info("Bedrock 임베딩 생성 완료")
     return embedding
 
-# Lazy-load model/tokenizer
-@lru_cache()
+
+# @lru_cache()
 def load_model_and_tokenizer():
-    logger.info("임베딩 모델 및 토크나이저 로딩 시작")
-    tokenizer = AutoTokenizer.from_pretrained("BM-K/KoSimCSE-roberta")
-    model = AutoModel.from_pretrained("BM-K/KoSimCSE-roberta")
-    logger.info("임베딩 모델 및 토크나이저 로딩 완료")
-    return tokenizer, model
+    pass
+#     logger.info("임베딩 모델 및 토크나이저 로딩 시작")
+#     tokenizer = AutoTokenizer.from_pretrained("BM-K/KoMiniLM")
+#     model = AutoModel.from_pretrained("BM-K/KoMiniLM")
+#     logger.info("임베딩 모델 및 토크나이저 로딩 완료")
+#     return tokenizer, model
 
 def get_korean_embeddings(text: str) -> List[float]:
     logger.info("한국어 임베딩 생성 시작")

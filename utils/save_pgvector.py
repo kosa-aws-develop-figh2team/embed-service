@@ -7,7 +7,7 @@ import json
 import dotenv
 dotenv.load_dotenv()
 
-from utils.embedding import get_korean_embeddings
+from utils.embedding import get_embeddings
 
 # 로깅 설정
 logger = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ def save_text_to_pg(
         start_id = count_existing_vectors(service_id) # 벡터 개수 == 새로 저장할 청크의 인덱스
         vector_id = f"{service_id}_chunk_{start_id}"
     current_timestamp = datetime.datetime.now(datetime.timezone.utc)
-    vector = get_korean_embeddings(text)
+    vector = get_embeddings(text)
     vector_str = json.dumps(vector)
 
     own_conn = False
