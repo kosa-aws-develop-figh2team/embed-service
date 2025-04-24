@@ -16,5 +16,6 @@ spec:
       containers:
       - name: embed-app
         image: 687436499847.dkr.ecr.ap-northeast-2.amazonaws.com/embed/embed-service:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5001

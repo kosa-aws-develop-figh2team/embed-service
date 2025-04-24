@@ -34,7 +34,7 @@ jobs:
         run: |
           echo "🔨 Buildx로 Docker build 시작"
           docker buildx build \
-            --platform linux/amd64 \
+            --platform linux/arm64 \
             --load \
             -t $ECR_REPOSITORY:$IMAGE_TAG .
 
