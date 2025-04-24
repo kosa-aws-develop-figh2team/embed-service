@@ -16,5 +16,7 @@ COPY ./requirements.txt /app
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
+RUN pip uninstall -y uvicorn && pip install --no-binary :all: uvicorn
+
 EXPOSE 5001
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5001"]
