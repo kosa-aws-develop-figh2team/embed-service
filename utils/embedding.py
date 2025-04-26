@@ -24,6 +24,10 @@ BEDROCK_REGION = os.getenv("BEDROCK_REGION", "us-west-2")
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', handlers=[logging.StreamHandler()])
 
+@lru_cache()
+def get_bedrock_client():
+    return boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
+
 def get_embeddings(text:str) -> List[float]:
     embedding = get_bedrock_embedding(text)
     return embedding
@@ -37,7 +41,7 @@ def get_bedrock_embedding(text: str) -> List[float]:
     :return: 임베딩 벡터
     """
     logger.info("Bedrock 임베딩 생성 시작")
-    client = boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
+    client = get_bedrock_client()
 
     payload = {
         "inputText": text
@@ -50,7 +54,7 @@ def get_bedrock_embedding(text: str) -> List[float]:
         accept="application/json"
     )
 
-    body = json.loads(response["body"].read())
+    body = json.loads(response["body"].read().decode("utf-8"))
     embedding = body["embedding"]
     logger.debug(f"임베딩 생성 완료: {embedding}")
 
@@ -67,22 +71,22 @@ def load_model_and_tokenizer():
 #     logger.info("임베딩 모델 및 토크나이저 로딩 완료")
 #     return tokenizer, model
 
-def get_korean_embeddings(text: str) -> List[float]:
-    logger.info("한국어 임베딩 생성 시작")
-    tokenizer, model = load_model_and_tokenizer()
+# def get_korean_embeddings(text: str) -> List[float]:
+#     logger.info("한국어 임베딩 생성 시작")
+#     tokenizer, model = load_model_and_tokenizer()
 
-    inputs = tokenizer(text, padding=True, truncation=True, return_tensors="pt")
-    with torch.no_grad():
-        embedding = model(**inputs).last_hidden_state[:, 0, :]  # [1, hidden_size]
+#     inputs = tokenizer(text, padding=True, truncation=True, return_tensors="pt")
+#     with torch.no_grad():
+#         embedding = model(**inputs).last_hidden_state[:, 0, :]  # [1, hidden_size]
 
-    current_dim = embedding.size(1)
-    target_dim = 1536
+#     current_dim = embedding.size(1)
+#     target_dim = 1536
 
-    if current_dim < target_dim:
-        pad = torch.zeros((1, target_dim - current_dim), device=embedding.device, dtype=embedding.dtype)
-        padded_embedding = torch.cat([embedding, pad], dim=1)
-    else:
-        padded_embedding = embedding[:, :target_dim]
+#     if current_dim < target_dim:
+#         pad = torch.zeros((1, target_dim - current_dim), device=embedding.device, dtype=embedding.dtype)
+#         padded_embedding = torch.cat([embedding, pad], dim=1)
+#     else:
+#         padded_embedding = embedding[:, :target_dim]
 
-    logger.info("한국어 임베딩 생성 완료")
-    return padded_embedding.squeeze(0).tolist()
+#     logger.info("한국어 임베딩 생성 완료")
+#     return padded_embedding.squeeze(0).tolist()

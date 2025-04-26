@@ -13,6 +13,7 @@ spec:
       labels:
         app: embed-app
     spec:
+      serviceAccountName: embed-service-account
       containers:
       - name: embed-app
         image: 687436499847.dkr.ecr.ap-northeast-2.amazonaws.com/embed/embed-service:latest
