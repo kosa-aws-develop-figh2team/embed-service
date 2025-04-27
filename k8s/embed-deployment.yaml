@@ -22,4 +22,4 @@ spec:
         - containerPort: 5001
         envFrom:
         - secretRef:
-          name: db-secret
+            name: embed-secret
