@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, BackgroundTasks
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -56,15 +56,39 @@ def embed_single_text(request: SingleEmbedRequest):
         logger.error(f"단일 임베딩 처리 실패: {str(e)}")
         raise HTTPException(status_code=500, detail="임베딩 처리 중 오류 발생")
 
-# 2. 청크 리스트 임베딩 생성 및 저장
-@app.post("/embed/chunks", response_model=ChuckEmbedResponse)
-def embed_chunks(request: ChunkEmbedRequest):
+
+
+# Background Task용 안전한 청크 저장 함수
+def save_chunks_background(chunks: List[str], service_id: str):
     try:
-        vector_ids, flag = save_chunks_to_pg(chunks=request.chunk_list, service_id=request.service_id)
-        return {"vector_ids": vector_ids, "flag": flag}
+        logger.info(f"✅ 백그라운드로 청크 저장 시작: service_id={service_id}, 청크 수={len(chunks)}")
+        vector_ids, flag = save_chunks_to_pg(chunks=chunks, service_id=service_id)
+        logger.info(f"✅ 백그라운드로 청크 저장 완료: service_id={service_id}, 저장된 벡터 수={len(vector_ids)}")
     except Exception as e:
-        logger.error(f"청크 임베딩 저장 실패: {str(e)}")
+        logger.error(f"❌ 백그라운드 청크 저장 실패: service_id={service_id}, 에러={str(e)}")
+
+# 2. 청크 리스트 임베딩 생성 및 저장 (비동기 + 실패 핸들링 추가)
+@app.post("/embed/chunks", response_model=ChuckEmbedResponse)
+def embed_chunks(request: ChunkEmbedRequest, background_tasks: BackgroundTasks):
+    try:
+        # 비동기로 안전하게 백엔드 청크 저장 실행
+        background_tasks.add_task(save_chunks_background, request.chunk_list, request.service_id)
+
+        # 요청 즉시 응답
+        return {"vector_ids": [], "flag": True}
+    except Exception as e:
+        logger.error(f"❌ 청크 임베딩 백그라운드 등록 실패: {str(e)}")
         raise HTTPException(status_code=500, detail="청크 임베딩 처리 중 오류 발생")
+    
+# # 2. 청크 리스트 임베딩 생성 및 저장
+# @app.post("/embed/chunks", response_model=ChuckEmbedResponse)
+# def embed_chunks(request: ChunkEmbedRequest):
+#     try:
+#         vector_ids, flag = save_chunks_to_pg(chunks=request.chunk_list, service_id=request.service_id)
+#         return {"vector_ids": vector_ids, "flag": flag}
+#     except Exception as e:
+#         logger.error(f"청크 임베딩 저장 실패: {str(e)}")
+#         raise HTTPException(status_code=500, detail="청크 임베딩 처리 중 오류 발생")
 
 # 3. 유사 문서 검색
 @app.post("/embed/retrieve", response_model=RetrieveResponse)
