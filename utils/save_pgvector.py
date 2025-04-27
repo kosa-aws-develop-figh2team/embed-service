@@ -14,13 +14,15 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # DB 설정
-pg_config = {
-    "host": os.getenv("POSTGRES_HOST", "localhost"),
-    "port": int(os.getenv("POSTGRES_PORT", "5432")),
-    "user": os.getenv("POSTGRES_USER", "postgres"),
-    "password": os.getenv("POSTGRES_PASSWORD", "password"),
-    "dbname": os.getenv("POSTGRES_DB", "yourdb")
-}
+def get_pg_config():
+    pg_config = {
+        "host": os.getenv("POSTGRES_HOST", "localhost"),
+        "port": int(os.getenv("POSTGRES_PORT", "5432")),
+        "user": os.getenv("POSTGRES_USER", "postgres"),
+        "password": os.getenv("POSTGRES_PASSWORD", "password"),
+        "dbname": os.getenv("POSTGRES_DB", "yourdb")
+    }
+    return pg_config
 
 def count_existing_vectors(service_id: str) -> int:
     """
@@ -28,6 +30,7 @@ def count_existing_vectors(service_id: str) -> int:
     """
     count = 0
     try:
+        pg_config = get_pg_config()
         conn = psycopg2.connect(**pg_config)
         with conn.cursor() as cur:
             cur.execute("SELECT COUNT(*) FROM embeddings WHERE service_id = %s", (service_id,))
@@ -56,6 +59,7 @@ def save_text_to_pg(
 
     own_conn = False
     if conn is None:
+        pg_config = get_pg_config()
         conn = psycopg2.connect(**pg_config)
         own_conn = True
 
@@ -93,6 +97,7 @@ def save_chunks_to_pg(
     
     """
     vector_ids = []
+    pg_config = get_pg_config()
     conn = psycopg2.connect(**pg_config)
     logger.info("PostgreSQL 연결 성공")
     start_id = count_existing_vectors(service_id) # 벡터 개수 == 새로 저장할 청크의 인덱스
