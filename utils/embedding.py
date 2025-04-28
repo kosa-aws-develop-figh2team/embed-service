@@ -17,8 +17,8 @@ import dotenv
 dotenv.load_dotenv()
 
 # Bedrock 모델 설정
-BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "amazon.titan-embed-text-v1")
-BEDROCK_REGION = os.getenv("BEDROCK_REGION", "us-west-2")
+BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "amazon.titan-embed-text-v2:0")
+BEDROCK_REGION = os.getenv("BEDROCK_REGION", "ap-northeast-2")
 
 # 로깅 설정
 logger = logging.getLogger(__name__)

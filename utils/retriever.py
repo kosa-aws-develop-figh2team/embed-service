@@ -49,7 +49,7 @@ def get_pg_connection() -> Generator[psycopg2.extensions.connection, None, None]
             conn.close()
             logger.info("PostgreSQL 연결 종료")
 
-def search_similar_documents(
+def _search_similar_documents(
     text: str,
     top_k: int = 5,
 ) -> List[Dict]:
@@ -67,6 +67,38 @@ def search_similar_documents(
                 LIMIT %s;
             """
             cur.execute(query, (embedding_vector, top_k))
+            rows = cur.fetchall()
+
+            for row in rows:
+                result = {
+                    "id": row[0],
+                    "service_id": row[1],
+                    "content": row[2],
+                }
+                results.append(result)
+
+    return results
+
+def search_similar_documents(
+    text: str,
+    top_k: int = 5,
+) -> List[Dict]:
+    """
+    pgvector와 BM25 키워드 검색을 혼합한 Hybrid Search를 통해
+    가장 유사한 문서 청크를 top-k개 검색하여 반환
+    """
+    results = []
+    embedding_vector = get_embeddings(text)
+    with get_pg_connection() as conn:
+        with conn.cursor() as cur:
+            query = """
+                SELECT id, service_id, content,
+                       (0.5 * (1 - (embedding <=> %s::vector)) + 0.5 * ts_rank_cd(to_tsvector('simple', content), plainto_tsquery('simple', %s))) AS hybrid_score
+                FROM embeddings
+                ORDER BY hybrid_score DESC
+                LIMIT %s;
+            """
+            cur.execute(query, (embedding_vector, text, top_k))
             rows = cur.fetchall()
 
             for row in rows:
