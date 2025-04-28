@@ -13,21 +13,23 @@ from utils.embedding import get_embeddings
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
-pg_config = {
-    "host": os.getenv("POSTGRES_HOST"),
-    "port": int(os.getenv("POSTGRES_PORT")),
-    "user": os.getenv("POSTGRES_USER"),
-    "password": os.getenv("POSTGRES_PASSWORD"),
-    "dbname": os.getenv("POSTGRES_DB")
-}
+# DB 설정
+def get_pg_config():
+    pg_config = {
+        "host": os.getenv("POSTGRES_HOST", "localhost"),
+        "port": int(os.getenv("POSTGRES_PORT", "5432")),
+        "user": os.getenv("POSTGRES_USER", "postgres"),
+        "password": os.getenv("POSTGRES_PASSWORD", "password"),
+        "dbname": os.getenv("POSTGRES_DB", "yourdb")
+    }
+    return pg_config
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @contextmanager
-def get_pg_connection(pg_config: Dict) -> Generator[psycopg2.extensions.connection, None, None]:
+def get_pg_connection() -> Generator[psycopg2.extensions.connection, None, None]:
     """
     PostgreSQL 연결을 생성하는 context manager.
     사용이 끝나면 자동으로 연결 종료됨.
@@ -35,6 +37,7 @@ def get_pg_connection(pg_config: Dict) -> Generator[psycopg2.extensions.connecti
     conn = None
     try:
         logger.info("PostgreSQL 연결 시도 중...")
+        pg_config = get_pg_config()
         conn = psycopg2.connect(**pg_config)
         logger.info("PostgreSQL 연결 성공")
         yield conn
@@ -55,7 +58,7 @@ def search_similar_documents(
     """
     results = []
     embedding_vector = get_embeddings(text)
-    with get_pg_connection(pg_config) as conn:
+    with get_pg_connection() as conn:
         with conn.cursor() as cur:
             query = """
                 SELECT id, service_id, content, embedding <=> %s::vector AS distance
