@@ -30,13 +30,6 @@ def get_bedrock_client():
 
 def get_embeddings(text: str) -> List[float]:
     embedding = get_bedrock_embedding(text)
-    # 반환된 임베딩 차원이 1536이 아닌 경우 경고 후 조정
-    if len(embedding) != 1536:
-        logger.warning(f"임베딩 차원({len(embedding)})이 예상치(1536)와 다릅니다. 패딩/자르기 처리합니다.")
-        if len(embedding) < 1536:
-            embedding.extend([0.0] * (1536 - len(embedding)))
-        else:
-            embedding = embedding[:1536]
     return embedding
 
 def get_bedrock_embedding(text: str) -> List[float]:
