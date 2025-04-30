@@ -45,3 +45,40 @@ jobs:
           echo "🚀 ECR로 push 시작"
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: ✏️ Update deployment.yml image tag
+        env:
+          ECR_REGISTRY: ${{ vars.ECR_REGISTRY }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          echo "🕵️ 현재 deployment.yml 파일 내용 보기"
+          cat ./k8s/deployment.yml
+
+          echo "🛠️ 사용할 ECR_REGISTRY=$ECR_REGISTRY"
+          echo "🛠️ 사용할 ECR_REPOSITORY=$ECR_REPOSITORY"
+          echo "🛠️ 사용할 IMAGE_TAG=$IMAGE_TAG"
+
+          echo "📝 실행할 sed 명령어:"
+          echo "sed -i 's#image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:.*#image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}#g' ./k8s/deployment.yml"
+
+          echo "✏️ deployment.yml 이미지 태그 업데이트 시작"
+          sed -i "s#image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:.*#image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}#g" ./k8s/deployment.yml
+
+          echo "✅ 업데이트된 deployment.yml 파일 결과 보기"
+          cat ./k8s/deployment.yml
+
+      - name: ✅ Commit and push updated manifest
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add ./k8s/deployment.yml
+
+          if git diff --cached --quiet; then
+            echo "ℹ️ 변경사항 없음. 커밋 생략"
+          else
+            echo "🚀 변경 커밋 & 푸시"
+            git commit -m "🔄 Update image tag to ${{ github.sha }}"
+            git push origin HEAD:main
+          fi

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: embed-service
+  namespace: embed
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"   # 🔥 내부용 ELB로 생성
+spec:
+  type: LoadBalancer
+  selector:
+    app: embed-app
+  ports:
+    - name: http
+      port: 5001               # 클라이언트가 접근할 포트 (내부에서도)
+      targetPort: 5001         # 컨테이너가 리스닝하는 포트 (FastAPI 5001)
